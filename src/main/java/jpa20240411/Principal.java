@@ -28,9 +28,15 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
+
 import java.awt.event.ActionListener;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.awt.event.ActionEvent;
+import javax.swing.JFormattedTextField;
 
 public class Principal extends JFrame {
 
@@ -51,6 +57,7 @@ public class Principal extends JFrame {
 	private JComboBox<Integer> jcbNota;
 	private int indiceProximalistaEstudiantesSeleccionados = 0;
 	private int indiceProximalistaEstudiantesNoSeleccionados = 0;
+	private JFormattedTextField jftfFecha;
 	/**
 	 * Launch the application.
 	 */
@@ -84,7 +91,7 @@ public class Principal extends JFrame {
 		GridBagLayout gbl_panel = new GridBagLayout();
 		gbl_panel.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 		gbl_panel.rowHeights = new int[]{0, 0, 0, 0, 0};
-		gbl_panel.columnWeights = new double[]{0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel.columnWeights = new double[]{0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		panel.setLayout(gbl_panel);
 		
@@ -100,7 +107,7 @@ public class Principal extends JFrame {
 		jcbMateria = new JComboBox<Materia>();
 		GridBagConstraints gbc_jcbMateria = new GridBagConstraints();
 		gbc_jcbMateria.gridwidth = 10;
-		gbc_jcbMateria.insets = new Insets(0, 0, 5, 5);
+		gbc_jcbMateria.insets = new Insets(0, 0, 5, 0);
 		gbc_jcbMateria.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jcbMateria.gridx = 1;
 		gbc_jcbMateria.gridy = 0;
@@ -118,7 +125,7 @@ public class Principal extends JFrame {
 		jcbProfesor = new JComboBox<Profesor>();
 		GridBagConstraints gbc_jcbProfesor = new GridBagConstraints();
 		gbc_jcbProfesor.gridwidth = 10;
-		gbc_jcbProfesor.insets = new Insets(0, 0, 5, 5);
+		gbc_jcbProfesor.insets = new Insets(0, 0, 5, 0);
 		gbc_jcbProfesor.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jcbProfesor.gridx = 1;
 		gbc_jcbProfesor.gridy = 1;
@@ -136,7 +143,7 @@ public class Principal extends JFrame {
 		jcbNota = new JComboBox<Integer>();
 		GridBagConstraints gbc_jcbNota = new GridBagConstraints();
 		gbc_jcbNota.gridwidth = 10;
-		gbc_jcbNota.insets = new Insets(0, 0, 5, 5);
+		gbc_jcbNota.insets = new Insets(0, 0, 5, 0);
 		gbc_jcbNota.fill = GridBagConstraints.HORIZONTAL;
 		gbc_jcbNota.gridx = 1;
 		gbc_jcbNota.gridy = 2;
@@ -148,6 +155,23 @@ public class Principal extends JFrame {
 				cargarEstudiantes();
 			}
 		});
+		
+		JLabel lblNewLabel_5 = new JLabel("Fecha:");
+		lblNewLabel_5.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		GridBagConstraints gbc_lblNewLabel_5 = new GridBagConstraints();
+		gbc_lblNewLabel_5.insets = new Insets(0, 0, 0, 5);
+		gbc_lblNewLabel_5.gridx = 0;
+		gbc_lblNewLabel_5.gridy = 3;
+		panel.add(lblNewLabel_5, gbc_lblNewLabel_5);
+		
+		jftfFecha = getJFormattedTextFieldDatePersonalizado();
+		GridBagConstraints gbc_jftfFecha = new GridBagConstraints();
+		gbc_jftfFecha.gridwidth = 4;
+		gbc_jftfFecha.insets = new Insets(0, 0, 0, 5);
+		gbc_jftfFecha.fill = GridBagConstraints.HORIZONTAL;
+		gbc_jftfFecha.gridx = 1;
+		gbc_jftfFecha.gridy = 3;
+		panel.add(jftfFecha, gbc_jftfFecha);
 		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
 		gbc_btnNewButton.gridx = 10;
 		gbc_btnNewButton.gridy = 3;
@@ -398,14 +422,51 @@ public class Principal extends JFrame {
 	        nuevaValoracion.setIdMateria(materia.getId());
 	        nuevaValoracion.setIdProfesor(profesor.getId());
 	        nuevaValoracion.setValoracion((Integer) this.jcbNota.getSelectedItem());
-
+	        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+	        try {
+				nuevaValoracion.setFecha(sdf.parse(jftfFecha.getText()));
+				System.out.println("Cambio de fecha");
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	        
 	        if (valoracionExistente != null) {
 	            valoracionExistente.setValoracion(nuevaValoracion.getValoracion());
+	            valoracionExistente.setFecha(nuevaValoracion.getFecha());
 	            ControladorValoracionMateriaJPA.getInstance().update(valoracionExistente);
 	        } else {
 	            ControladorValoracionMateriaJPA.getInstance().insert(nuevaValoracion);
 	        }
 	    }
+	}
+	
+	private JFormattedTextField getJFormattedTextFieldDatePersonalizado() {
+		JFormattedTextField jftf = new JFormattedTextField(
+				new JFormattedTextField.AbstractFormatter() {
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+			@Override
+			public String valueToString(Object value) throws ParseException {
+				if (value != null && value instanceof Date) {
+					return sdf.format(((Date) value));
+				}
+				return "";
+			}
+
+			@Override
+			public Object stringToValue(String text) throws ParseException {
+				try {
+					return sdf.parse(text);
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(null, "Error en la fecha");
+					return null;
+				}
+			}
+		});
+		
+		jftf.setValue(new Date());
+		return jftf;
 	}
 
 	

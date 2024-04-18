@@ -1,5 +1,7 @@
 package jpa20240411.model;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,7 +19,8 @@ public class ValoracionMateria extends Entidad{
 	private int idEstudiante;
 	private int idProfesor;
 	private int idMateria;
-	private int valoracion ;
+	private int valoracion;
+	private Date fecha;
 	
 	
 	public int getValoracion() {
@@ -25,6 +28,13 @@ public class ValoracionMateria extends Entidad{
 	}
 	public void setValoracion(int valoracion) {
 		this.valoracion = valoracion;
+	}
+	
+	public Date getFecha() {
+		return fecha;
+	}
+	public void setFecha(Date fecha) {
+		this.fecha = fecha;
 	}
 	public int getId() {
 		return id;
